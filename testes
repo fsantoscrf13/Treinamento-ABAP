@@ -1,3 +1,8 @@
+*&---------------------------------------------------------------------*
+*& Report ZR0007
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
 REPORT zr0007.
 
 * Declaração de tipos
@@ -64,3 +69,21 @@ LOOP AT t_material INTO w_material.
 ENDLOOP.
 
 ULINE.
+
+*Utulizando o comando READ TABLE
+READ TABLE t_fornec INDEX 2.
+IF sy-subrc = 0.
+  WRITE:/ t_fornec-codfor, t_fornec-nome, 'READ'.
+ENDIF.
+
+ULINE.
+
+*Utilizando o comando MODIFY
+LOOP AT t_material INTO w_material.
+  CONCATENATE w_material-descri 'BRANCO' INTO w_material-descri SEPARATED BY space.
+  MODIFY t_material FROM w_material TRANSPORTING descri.
+ENDLOOP.
+
+LOOP AT t_material INTO w_material.
+WRITE:/ w_material-codmat, w_material-descri, 'MODIFY'.
+ENDLOOP.
