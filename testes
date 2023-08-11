@@ -1,0 +1,66 @@
+REPORT zr0007.
+
+* Declaração de tipos
+TYPES: BEGIN OF ty_material,
+         codmat(10) TYPE c,
+         descri(35) TYPE c,
+       END OF ty_material.
+
+* Declaração de Estruturas (work area)
+*Nesse exemplo estamos declarando duas estruturas de maneira diferente
+
+DATA w_material TYPE ty_material.
+
+DATA: BEGIN OF w_cliente,
+        codcli(10) TYPE c,
+        nome(35)   TYPE c,
+      END OF w_cliente.
+
+*Declarando tabela interna
+*Nesse exemplo estamos declarando 2 tabelas porem de maneiras diferentes
+DATA t_material TYPE TABLE OF ty_material.
+
+
+DATA: BEGIN OF t_fornec OCCURS 0,
+        codfor(10) TYPE c,
+        nome(35)   TYPE c,
+      END OF t_fornec.
+
+* Inserindo registro na tabela interna (APPEND)
+*INÍCIO - Exemplo APPEND tabela interna COM Heard Line
+
+t_fornec-codfor = 'FORN-0001'.
+t_fornec-nome   = 'APPLE'.
+APPEND t_fornec.
+
+
+CLEAR t_fornec.
+t_fornec-codfor = 'FORN-0002'.
+t_fornec-nome   = 'SAMSUNG'.
+APPEND t_fornec.
+* FIM  - Exemplo APPEND com tabela interna COM HEARD LINE
+
+*INÍCIO - Exemplo APPEND tabela interna SEM Heard Line
+w_material-codmat = 'MAT-0001'.
+w_material-descri = 'IPHONE 6'.
+APPEND w_material TO t_material.
+
+CLEAR w_material.
+w_material-codmat = 'MAT-0002'.
+w_material-descri = 'GALAXY 6'.
+APPEND w_material TO t_material.
+* FIM  - Exemplo APPEND com tabela interna SEM HEARD LINE
+
+*Utilizando comando LOOP
+*LOOP tabela interna com Header Line
+LOOP AT t_fornec WHERE codfor = 'FORN-0001'.
+  WRITE:/ t_fornec-codfor, t_fornec-nome, 'LOOP'.
+ENDLOOP.
+
+ULINE.
+*LOOP tabela interna SEM HEADER LINE
+LOOP AT t_material INTO w_material.
+  WRITE:/ w_material-codmat, w_material-descri, 'LOOP'.
+ENDLOOP.
+
+ULINE.
