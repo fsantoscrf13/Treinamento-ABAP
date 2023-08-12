@@ -1,0 +1,106 @@
+
+
+
+
+*tabela transparente
+TABLES t005u.
+
+* Tabelas interna
+DATA: BEGIN OF t_t005u OCCURS 0,
+        land1 LIKE t005u-land1,
+        bland LIKE t005u-bland,
+        bezei LIKE t005u-bezei,
+      END OF t_t005u.
+
+
+*Tela de seleção
+SELECTION-SCREEN BEGIN OF BLOCK b01 WITH FRAME TITLE TEXT-001.
+SELECT-OPTIONS: s_land1 FOR t005u-land1,
+                s_bland FOR t005u-bland.
+SELECTION-SCREEN END OF BLOCK b01.
+
+SELECTION-SCREEN BEGIN OF BLOCK b02 WITH FRAME TITLE TEXT-002.
+PARAMETERS: p_spras LIKE t005u-spras.
+SELECTION-SCREEN END OF BLOCK b02.
+
+PERFORM f_seleciona_dados.
+
+PERFORM f_imprime_cabecalho.
+
+PERFORM f_imprime_dados.
+
+* Rotina de seleção
+
+
+
+*&---------------------------------------------------------------------*
+*& Form F_SELECIONA_DADOS
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM f_seleciona_dados .
+
+  SELECT land1 bland bezei
+  FROM t005u
+  INTO TABLE t_t005u
+  WHERE land1 IN s_land1
+    AND bland IN s_bland
+    AND spras = p_spras.
+
+  IF sy-subrc <> 0.
+    MESSAGE TEXT-003 TYPE 'I'. "Nenhum Registro encontrado
+    STOP.
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form F_IMPRIME_CABECALHO
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM f_imprime_cabecalho .
+
+  FORMAT COLOR 1.
+  ULINE /(35).
+  WRITE: /1 '|',
+          2 'País',
+          7 '|',
+          8 'Região',
+          14 '|',
+          15 'Denominação',
+          35 '|'.
+  ULINE /(35).
+  FORMAT RESET.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*& Form F_IMPRIME_DADOS
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM f_imprime_dados .
+
+  LOOP AT t_t005u.
+    WRITE: /1 '|',
+            2  t_t005u-land1,
+            7 '|',
+            9  t_t005u-bland,
+            14 '|',
+            15 t_t005u-bezei,
+            35 '|'.
+    ULINE /(35).
+
+  ENDLOOP.
+
+
+ENDFORM.
